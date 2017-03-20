@@ -1,0 +1,36 @@
+markdown:         kramdown
+kramdown:
+    smart_quotes:   ["apos", "apos", "quot", "quot"]
+    input:          GFM
+highlighter:      rouge
+gems:             [jekyll-paginate]
+paginate:         5
+permalink:        /:year/:month/:day/:title
+
+title:            Arlen's Zone
+url:              https://arlenluo.github.io.
+feed:             /feed.xml
+BASE_PATH:
+author:
+    name:         ArlenLuo
+    email:        sjtuluo@gmail.com
+description:      "大晶晶的博客"
+
+about: 			  "I am ArlenLuo, a neophyte in coding. I major in Computer Science in SJTU, and now I'm a third year exchange student in NTU. Hope we can make friends with each other!"
+follow:
+    github:       https://github.com/arlenluo
+    ins:          https://www.instagram.com/arlenluo915/
+    facebook:     https://www.facebook.com/luo.jing.773
+    mail:         mailto:sjtuluo@gmail.com
+    linkedin:     https://www.linkedin.com/in/arlen-luo-47b0bb127
+    google:       https://plus.google.com/105274126253221874551
+    twitter:      https://twitter.com/Arlen_Luo
+
+style: 			  /css/style.css
+blogName: 		  Arlen's Zone
+blogDesc: 		  如果你是船，漂泊就是你的命运，可别靠岸。——北岛
+
+comments :
+  provider : duoshuo
+  duoshuo :
+    short_name : arlenluo

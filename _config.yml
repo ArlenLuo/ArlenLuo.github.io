@@ -1,3 +1,4 @@
+encoding:           utf-8
 markdown:         kramdown
 kramdown:
     smart_quotes:   ["apos", "apos", "quot", "quot"]
@@ -28,7 +29,8 @@ follow:
 
 style: 			  /css/style.css
 blogName: 		  Arlen's Zone
-blogDesc: 		  如果你是船，漂泊就是你的命运，可别靠岸。——北岛
+blogDesc: 		  Computers are starting to open their eyes. -Jeff Dean
+homepage:         Jing Luo's Zone
 
 comments :
   provider : duoshuo

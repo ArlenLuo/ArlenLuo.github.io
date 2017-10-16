@@ -18,19 +18,6 @@
   <![endif]-->
 </head>
 
-<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-<script type="text/javascript">
-var duoshuoQuery = {short_name:"arlenluo"};
-  (function() {
-    var ds = document.createElement('script');
-    ds.type = 'text/javascript';ds.async = true;
-    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-    ds.charset = 'UTF-8';
-    (document.getElementsByTagName('head')[0] 
-     || document.getElementsByTagName('body')[0]).appendChild(ds);
-  })();
-</script>
-<!-- 多说公共JS代码 end -->
 <body>
     {% include head.html %} 
   <section id="content">
@@ -43,5 +30,7 @@ var duoshuoQuery = {short_name:"arlenluo"};
 </html>
 
 <!-- 浏览量统计脚本 -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> 
+<script src="{{ site.BASE_PATH }}/js/main.js"></script>
 <script src="{{ site.BASE_PATH }}/js/av-mini-0.6.10.js"></script>
 <script src="{{ site.BASE_PATH }}/js/hit-kounter-lc-0.2.0.js"></script>
